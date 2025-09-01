@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using StackSmiths.Data;
 
@@ -11,9 +12,11 @@ using StackSmiths.Data;
 namespace StackSmiths.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250901130328_IdentityInit")]
+    partial class IdentityInit
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -220,35 +223,7 @@ namespace StackSmiths.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("StackSmiths.Models.CartItems", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ProductsId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProductsId");
-
-                    b.ToTable("CartItems");
-                });
-
-            modelBuilder.Entity("StackSmiths.Models.Carts", b =>
+            modelBuilder.Entity("StackSmiths.Models.Cart", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -273,7 +248,30 @@ namespace StackSmiths.Migrations
                     b.ToTable("Carts");
                 });
 
-            modelBuilder.Entity("StackSmiths.Models.OrderItems", b =>
+            modelBuilder.Entity("StackSmiths.Models.Order", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("OrderDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("TotalAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Orders");
+                });
+
+            modelBuilder.Entity("StackSmiths.Models.OrderItem", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -285,7 +283,6 @@ namespace StackSmiths.Migrations
                         .HasColumnType("int");
 
                     b.Property<decimal>("Price")
-                        .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("ProductId")
@@ -303,31 +300,7 @@ namespace StackSmiths.Migrations
                     b.ToTable("OrderItems");
                 });
 
-            modelBuilder.Entity("StackSmiths.Models.Orders", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("OrderDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<decimal>("TotalAmount")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Orders");
-                });
-
-            modelBuilder.Entity("StackSmiths.Models.Products", b =>
+            modelBuilder.Entity("StackSmiths.Models.Product", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -344,18 +317,14 @@ namespace StackSmiths.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("Price")
-                        .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("Stock")
-                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.ToTable("Products");
                 });
 
-            modelBuilder.Entity("StackSmiths.Models.WishlistItem", b =>
+            modelBuilder.Entity("StackSmiths.Models.Wishlist", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -373,31 +342,6 @@ namespace StackSmiths.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ProductId");
-
-                    b.ToTable("WishlistItems");
-                });
-
-            modelBuilder.Entity("StackSmiths.Models.Wishlists", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ProductsId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProductsId");
 
                     b.ToTable("Wishlists");
                 });
@@ -453,20 +397,9 @@ namespace StackSmiths.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("StackSmiths.Models.CartItems", b =>
+            modelBuilder.Entity("StackSmiths.Models.Cart", b =>
                 {
-                    b.HasOne("StackSmiths.Models.Products", "Products")
-                        .WithMany()
-                        .HasForeignKey("ProductsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Products");
-                });
-
-            modelBuilder.Entity("StackSmiths.Models.Carts", b =>
-                {
-                    b.HasOne("StackSmiths.Models.Products", "Product")
+                    b.HasOne("StackSmiths.Models.Product", "Product")
                         .WithMany()
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -475,15 +408,15 @@ namespace StackSmiths.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("StackSmiths.Models.OrderItems", b =>
+            modelBuilder.Entity("StackSmiths.Models.OrderItem", b =>
                 {
-                    b.HasOne("StackSmiths.Models.Orders", "Order")
+                    b.HasOne("StackSmiths.Models.Order", "Order")
                         .WithMany("Items")
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("StackSmiths.Models.Products", "Product")
+                    b.HasOne("StackSmiths.Models.Product", "Product")
                         .WithMany()
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -494,9 +427,9 @@ namespace StackSmiths.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("StackSmiths.Models.WishlistItem", b =>
+            modelBuilder.Entity("StackSmiths.Models.Wishlist", b =>
                 {
-                    b.HasOne("StackSmiths.Models.Products", "Product")
+                    b.HasOne("StackSmiths.Models.Product", "Product")
                         .WithMany()
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -505,18 +438,7 @@ namespace StackSmiths.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("StackSmiths.Models.Wishlists", b =>
-                {
-                    b.HasOne("StackSmiths.Models.Products", "Products")
-                        .WithMany()
-                        .HasForeignKey("ProductsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Products");
-                });
-
-            modelBuilder.Entity("StackSmiths.Models.Orders", b =>
+            modelBuilder.Entity("StackSmiths.Models.Order", b =>
                 {
                     b.Navigation("Items");
                 });
